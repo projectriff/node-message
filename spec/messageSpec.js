@@ -189,10 +189,11 @@ describe('Message', () => {
         it('manages headers', () => {
             const message = Message.builder()
                 .addHeader('Content-Type', 'text/plain')
+                .headers(new Headers().addHeader('content-type', 'application/json'))
                 .addHeader('Accept', 'foo/bar')
                 .replaceHeader('Accept', 'application/json', 'text/plain')
                 .build();
-            expect(message.headers.getValues('Content-Type')).toEqual(['text/plain']);
+            expect(message.headers.getValues('Content-Type')).toEqual(['application/json']);
             expect(message.headers.getValues('Accept')).toEqual(['application/json', 'text/plain']);
         });
 
