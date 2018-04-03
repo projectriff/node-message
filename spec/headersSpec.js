@@ -15,6 +15,8 @@
  */
 
 const { AbstractHeaders, Headers } = require('..');
+const fs = require('fs');
+const path = require('path');
 
 describe('Headers', () => {
 
@@ -348,6 +350,54 @@ describe('Headers', () => {
             uninstall();
             expect(Headers.fromRiffHeaders).not.toBe(AbstractHeaders.fromRiffHeaders);
             expect(AbstractHeaders.fromRiffHeaders).toBe(originalFromRiffHeaders);
+
+        });
+
+    });
+
+    describe('AbstractHeaders', () => {
+
+        const origPath = path.resolve(__dirname, '../lib/headers.js');
+        const altPath = path.resolve(__dirname, '../lib/alt_headers.js');
+
+        let AltAbstractHeaders, fromRiffHeaders, toRiffHeaders;
+
+        beforeAll(() => {
+            fs.copyFileSync(origPath, altPath);
+            fromRiffHeaders = AbstractHeaders.fromRiffHeaders;
+            toRiffHeaders = AbstractHeaders.prototype.toRiffHeaders;
+            AltAbstractHeaders = require(altPath).AbstractHeaders;
+        });
+        afterAll(() => {
+            fs.unlinkSync(altPath);
+        });
+
+        it('distinct requires are the same', () => {
+            expect(AltAbstractHeaders).toBe(AbstractHeaders);
+        });
+
+        it('distinct requires do not mutate', () => {
+            expect(AltAbstractHeaders.fromRiffHeaders).toBe(fromRiffHeaders);
+            expect(AltAbstractHeaders.prototype.toRiffHeaders).toBe(toRiffHeaders);
+        });
+
+        describe('#fromRiffHeaders', () => {
+
+            it('throws', () => {
+                expect(() => {
+                    return AbstractHeaders.fromRiffHeaders({});
+                }).toThrowError(Error, 'fromRiffHeaders must be overridden');
+            });
+
+        });
+
+        describe('.toRiffHeaders', () => {
+
+            it('throws', () => {
+                expect(() => {
+                    return new AbstractHeaders().toRiffHeaders();
+                }).toThrowError(Error, 'toRiffHeaders must be overridden');
+            });
 
         });
 

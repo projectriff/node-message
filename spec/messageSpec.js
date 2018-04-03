@@ -15,6 +15,8 @@
  */
 
 const { AbstractMessage, Headers, Message } = require('..');
+const fs = require('fs');
+const path = require('path');
 
 describe('Message', () => {
 
@@ -219,6 +221,54 @@ describe('Message', () => {
             expect(mb2).toBe(mb3);
             const mb4 = mb3.replaceHeader('Content-Type', 'text/plain');
             expect(mb3).toBe(mb4);
+        });
+
+    });
+
+    describe('AbstractMessage', () => {
+
+        const origPath = path.resolve(__dirname, '../lib/message.js');
+        const altPath = path.resolve(__dirname, '../lib/alt_message.js');
+
+        let AltAbstractMessage, fromRiffMessage, toRiffMessage;
+
+        beforeAll(() => {
+            fs.copyFileSync(origPath, altPath);
+            fromRiffMessage = AbstractMessage.fromRiffMessage;
+            toRiffMessage = AbstractMessage.prototype.toRiffMessage;
+            AltAbstractMessage = require(altPath).AbstractMessage;
+        });
+        afterAll(() => {
+            fs.unlinkSync(altPath);
+        });
+
+        it('distinct requires are the same', () => {
+            expect(AltAbstractMessage).toBe(AbstractMessage);
+        });
+
+        it('distinct requires do not mutate', () => {
+            expect(AltAbstractMessage.fromRiffMessage).toBe(fromRiffMessage);
+            expect(AltAbstractMessage.prototype.toRiffMessage).toBe(toRiffMessage);
+        });
+
+        describe('#fromRiffMessage', () => {
+
+            it('throws', () => {
+                expect(() => {
+                    return AbstractMessage.fromRiffMessage({ headers: {}, payload: Buffer.from([]) });
+                }).toThrowError(Error, 'fromRiffMessage must be overridden');
+            });
+
+        });
+
+        describe('.toRiffMessage', () => {
+
+            it('throws', () => {
+                expect(() => {
+                    return new AbstractMessage().toRiffMessage();
+                }).toThrowError(Error, 'toRiffMessage must be overridden');
+            });
+
         });
 
     });
