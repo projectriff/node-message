@@ -33,14 +33,14 @@ describe('Message', () => {
                 constructor() {
                     super();
                 }
-                toRiffMessage() {
+                toRiffMessage({ preservePayload } = {}) {
                     return {
                         headers: {
                             'Content-Type': {
                                 values: ['text/plain']
                             }
                         },
-                        payload: Buffer.from('hello world')
+                        payload: preservePayload ? 'hello world' : Buffer.from('preservePayload')
                     };
                 }
             }
@@ -48,7 +48,7 @@ describe('Message', () => {
             const message = new Message(new AltMessage());
             expect(message instanceof Message).toBe(true);
             expect(message.headers.getValues('Content-Type')).toEqual(['text/plain']);
-            expect(message.payload).toEqual(Buffer.from('hello world'));
+            expect(message.payload).toEqual('hello world');
         });
 
     });
@@ -127,6 +127,12 @@ describe('Message', () => {
         it('an undefined payload is an empty Buffer', () => {
             const message = new Message({}, undefined);
             expect(message.toRiffMessage().payload).toEqual(Buffer.from([]));
+        });
+
+        it('can preserve the payload', () => {
+            const payload = 'hello world';
+            const message = new Message({}, payload);
+            expect(message.toRiffMessage({ preservePayload: true }).payload).toBe(payload);
         });
 
     });
