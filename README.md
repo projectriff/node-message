@@ -1,5 +1,7 @@
 # Message
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/projectriff/node-message.svg)](https://greenkeeper.io/)
+
 Message and Headers types used by riff's node-function-invoker.
 
 ## Install
