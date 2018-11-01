@@ -1,2 +1,8 @@
 language: node_js
-node_js: 8
+node_js: 10
+deploy:
+  provider: npm
+  email: "nobody@projectriff.io"
+  api_key: "$NPM_TOKEN"
+  on:
+    tags: true
