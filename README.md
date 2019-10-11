@@ -1,6 +1,6 @@
 # Message
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/projectriff/node-message.svg)](https://greenkeeper.io/)
+[![Dependabot badge](https://api.dependabot.com/badges/status?host=github&repo=projectriff/node-message)](https://dependabot.com)
 
 Message and Headers types used by riff's node-function-invoker.
 
